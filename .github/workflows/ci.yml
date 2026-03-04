@@ -1,0 +1,40 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run shared tests
+        run: npm run test --workspace=shared
+
+      - name: Run client tests
+        run: npm run test --workspace=client
+
+      - name: Run server tests
+        run: npm run test --workspace=server
+
+      - name: Build client
+        run: npm run build --workspace=client
+        env:
+          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+          VITE_BASE_URL: /

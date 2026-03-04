@@ -1,0 +1,2 @@
+export { ResolutionOverlay } from './ResolutionOverlay';
+

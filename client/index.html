@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prend Ton Temps 🕐</title>
+    <link rel="icon" type="image/svg+xml" href="/clock.svg" />
+    <script>
+      // Restaure le path après redirect SPA GitHub Pages (404.html trick)
+      (function() {
+        var redirect = sessionStorage.getItem('redirect');
+        if (redirect) {
+          sessionStorage.removeItem('redirect');
+          if (redirect !== window.location.pathname) {
+            window.history.replaceState(null, '', redirect);
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
