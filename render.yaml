@@ -3,7 +3,7 @@ services:
     name: prend-ton-temps-server
     runtime: node
     rootDir: .
-    buildCommand: npm ci
+    buildCommand: npm ci --include=dev
     startCommand: npm run start --workspace=server
     plan: free
     envVars:
