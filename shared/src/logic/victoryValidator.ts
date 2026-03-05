@@ -119,8 +119,8 @@ function validateClockFaceCondition(
  * Valide la victoire de la partie.
  *
  * Conditions de victoire :
- * 1. Toutes les cartes du deck sont posées sur le plateau.
- * 2. Les sommes des cadrans sont strictement croissantes (C1 < C2 < ... < C6).
+ * 1. Tous les joueurs ont joué toutes leurs cartes (mains vides).
+ * 2. Les sommes des cadrans sont croissantes ou égales (C1 ≤ C2 ≤ ... ≤ C6).
  * 3. La somme de chaque cadran ne dépasse pas 24 (sauf condition SUM_EXCEED_24).
  * 4. Chaque condition de cadran est respectée.
  */
@@ -135,14 +135,11 @@ export function validateVictory(gameState: GameState): VictoryResult {
     }
   }
 
-  // 1. Vérification : toutes les cartes sont posées (24 cartes au total)
-  const totalCardsOnBoard = gameState.clockFaces.reduce(
-    (acc, f) => acc + f.cards.length,
-    0
-  );
-  if (totalCardsOnBoard < 24) {
+  // 1. Vérification : tous les joueurs ont joué toutes leurs cartes
+  const totalCardsInHands = gameState.players.reduce((acc, p) => acc + p.hand.length, 0);
+  if (totalCardsInHands > 0) {
     violations.push(
-      `Il manque ${24 - totalCardsOnBoard} carte(s) sur le plateau.`
+      `Il reste ${totalCardsInHands} carte(s) en main non jouée(s).`
     );
   }
 

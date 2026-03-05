@@ -19,6 +19,7 @@ function makeFace(index: 0 | 1 | 2 | 3 | 4 | 5, cards: Card[] = []): ClockFace {
 function makeGameState(clockFaces: ClockFace[]): GameState {
   return {
     roomId: 'test-room',
+    creatorId: 'creator',
     phase: 'resolution',
     players: [],
     clockFaces,
@@ -108,17 +109,21 @@ describe('validateVictory', () => {
     expect(result.violations.some((v) => v.includes('C6') && v.includes('24'))).toBe(false);
   });
 
-  it('détecte des cartes manquantes sur le plateau', () => {
+  it('détecte des cartes manquantes sur le plateau (cartes encore en main)', () => {
     const state = makeGameState([
       makeFace(0, [makeCard('c1', 1, 'white')]),
-      makeFace(1, []),
-      makeFace(2, []),
-      makeFace(3, []),
-      makeFace(4, []),
-      makeFace(5, []),
+      makeFace(1, [makeCard('c2', 2, 'white')]),
+      makeFace(2, [makeCard('c3', 3, 'white')]),
+      makeFace(3, [makeCard('c4', 4, 'white')]),
+      makeFace(4, [makeCard('c5', 5, 'white')]),
+      makeFace(5, [makeCard('c6', 6, 'white')]),
     ]);
+    // Simuler un joueur qui a encore des cartes en main
+    state.players = [
+      { id: 'p1', name: 'P1', hand: [makeCard('h1', 7, 'black')], isReady: true, avatarSeed: 'p1' },
+    ];
     const result = validateVictory(state);
-    expect(result.violations.some((v) => v.includes('manque'))).toBe(true);
+    expect(result.violations.some((v) => v.includes('reste') && v.includes('main'))).toBe(true);
   });
 
   it('valide la condition EXACT_COUNT', () => {
