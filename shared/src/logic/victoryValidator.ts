@@ -146,11 +146,11 @@ export function validateVictory(gameState: GameState): VictoryResult {
     );
   }
 
-  // 2. Vérification : sommes strictement croissantes
+  // 2. Vérification : sommes croissantes ou égales (C1 ≤ C2 ≤ ... ≤ C6)
   for (let i = 1; i < sums.length; i++) {
-    if (sums[i] <= sums[i - 1]) {
+    if (sums[i] < sums[i - 1]) {
       violations.push(
-        `Ordre non respecté : somme C${i} (${sums[i - 1]}) ≥ somme C${i + 1} (${sums[i]}).`
+        `Ordre non respecté : somme C${i} (${sums[i - 1]}) > somme C${i + 1} (${sums[i]}).`
       );
     }
   }

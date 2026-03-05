@@ -10,7 +10,7 @@ describe('roomManager', () => {
   let roomId: string;
 
   beforeEach(() => {
-    roomId = roomManager.createRoom();
+    roomId = roomManager.createRoom('creator');
   });
 
   it('crée une salle et retourne un id', () => {
@@ -48,17 +48,23 @@ describe('roomManager', () => {
     expect(state?.players[0].isReady).toBe(true);
   });
 
-  it('allReady retourne false si moins de 2 joueurs', () => {
-    roomManager.joinRoom(roomId, makePlayer('p1'));
-    roomManager.markPlayerReady(roomId, 'p1');
-    expect(roomManager.allReady(roomId)).toBe(false);
-  });
-
-  it('allReady retourne true quand tous les joueurs sont prêts', () => {
+  it('allReady retourne false si moins de 4 joueurs', () => {
     roomManager.joinRoom(roomId, makePlayer('p1'));
     roomManager.joinRoom(roomId, makePlayer('p2'));
     roomManager.markPlayerReady(roomId, 'p1');
     roomManager.markPlayerReady(roomId, 'p2');
+    expect(roomManager.allReady(roomId)).toBe(false);
+  });
+
+  it('allReady retourne true quand 4 joueurs sont tous prêts', () => {
+    roomManager.joinRoom(roomId, makePlayer('p1'));
+    roomManager.joinRoom(roomId, makePlayer('p2'));
+    roomManager.joinRoom(roomId, makePlayer('p3'));
+    roomManager.joinRoom(roomId, makePlayer('p4'));
+    roomManager.markPlayerReady(roomId, 'p1');
+    roomManager.markPlayerReady(roomId, 'p2');
+    roomManager.markPlayerReady(roomId, 'p3');
+    roomManager.markPlayerReady(roomId, 'p4');
     expect(roomManager.allReady(roomId)).toBe(true);
   });
 });

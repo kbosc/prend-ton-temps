@@ -52,14 +52,14 @@ describe('validateVictory', () => {
     expect(result.sums).toEqual([4, 8, 12, 16, 20, 24]);
   });
 
-  it('détecte une égalité entre deux cadrans consécutifs', () => {
+  it('accepte une égalité entre deux cadrans consécutifs', () => {
     const state = buildVictoryState();
-    // Forcer C1 = C2 = 8 (swap les 4 cartes de C1 par celles de C2)
+    // Forcer C1 = C2 = 8
     state.clockFaces[0].cards = [makeCard('eq1', 2, 'white'), makeCard('eq2', 2, 'black'), makeCard('eq3', 2, 'white'), makeCard('eq4', 2, 'black')]; // sum=8
-    // C2 reste à 8 → égalité
+    // C2 reste à 8 → égalité autorisée
     const result = validateVictory(state);
-    expect(result.isVictory).toBe(false);
-    expect(result.violations.some((v) => v.includes('C1') && v.includes('C2'))).toBe(true);
+    // L'égalité ne doit PAS être une violation
+    expect(result.violations.some((v) => v.includes('C1') && v.includes('C2'))).toBe(false);
   });
 
   it('détecte un ordre décroissant entre cadrans', () => {

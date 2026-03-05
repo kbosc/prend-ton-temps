@@ -80,6 +80,7 @@ export function ClockFaceSlot({
               key={card.id}
               card={card}
               faceUp={card.isRevealed}
+              showColor={!card.isRevealed}
               size="sm"
               onClick={
                 !card.isRevealed && canReveal

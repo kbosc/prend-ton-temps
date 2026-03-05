@@ -164,19 +164,26 @@ io.on('connection', (socket) => {
   socket.on(CLIENT_EVENTS.RESTART_GAME, ({ roomId }: { roomId: string }) => {
     const state = roomManager.getRoom(roomId);
     if (!state || state.phase !== 'finished') return;
-    // Repasser en lobby, réinitialiser mains et isReady
-    const reset = {
+    // Redistribuer les cartes, repasser en playing avec conditions vierges
+    const lobbyLike = {
       ...state,
-      phase: 'lobby' as const,
-      players: state.players.map((p) => ({ ...p, hand: [], isReady: false })),
-      clockFaces: [0, 1, 2, 3, 4, 5].map((i) => ({ index: i as ClockFaceIndex, cards: [] })),
+      phase: 'playing' as const,
+      players: state.players.map((p) => ({ ...p, hand: [], isReady: true })),
+      clockFaces: ([0, 1, 2, 3, 4, 5] as ClockFaceIndex[]).map((i) => ({ index: i, cards: [] as any[] })),
       currentTurn: '',
       revealedCount: 0,
+      roundStarted: false,
       victory: undefined,
       violationMessages: undefined,
     };
-    roomManager.setRoom(roomId, reset);
-    io.to(roomId).emit(SERVER_EVENTS.GAME_STATE_UPDATE, reset);
+    const restarted = startGame(lobbyLike);
+    const withEmptyConditions = {
+      ...restarted,
+      clockFaces: restarted.clockFaces.map((f) => ({ ...f, condition: undefined })),
+      roundStarted: false,
+    };
+    roomManager.setRoom(roomId, withEmptyConditions);
+    io.to(roomId).emit(SERVER_EVENTS.GAME_STATE_UPDATE, withEmptyConditions);
   });
 
   /* ── SET CUSTOM CONDITIONS ── */

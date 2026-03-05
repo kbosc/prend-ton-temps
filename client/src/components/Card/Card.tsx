@@ -5,6 +5,8 @@ interface CardProps {
   card: CardType;
   /** Afficher la face (true) ou le dos (false) */
   faceUp?: boolean;
+  /** Afficher la couleur sans la valeur (carte posée, face cachée mais couleur visible) */
+  showColor?: boolean;
   /** Carte en cours de glissement */
   isDragging?: boolean;
   onClick?: () => void;
@@ -23,6 +25,7 @@ const SIZE_CLASSES = {
 export function Card({
   card,
   faceUp = card.isRevealed,
+  showColor = false,
   isDragging = false,
   onClick,
   draggable = false,
@@ -31,6 +34,34 @@ export function Card({
   size = 'md',
 }: CardProps) {
   const sizeClass = SIZE_CLASSES[size];
+
+  // Mode "couleur visible sans valeur" : carte posée face cachée mais couleur connue
+  if (!faceUp && showColor) {
+    return (
+      <div
+        className={`relative ${sizeClass} rounded-lg select-none transition-all duration-300
+          ${isDragging ? 'opacity-50 scale-95 rotate-3' : ''}
+          ${onClick ? 'cursor-pointer hover:scale-105 hover:-translate-y-1' : ''}
+        `}
+        onClick={onClick}
+        data-card-id={card.id}
+        data-testid={`card-${card.id}`}
+      >
+        <div
+          className={`w-full h-full rounded-lg border-2 flex flex-col items-center justify-center shadow-md
+            ${card.color === 'white'
+              ? 'bg-gray-200 border-gray-300 text-gray-500'
+              : 'bg-gray-800 border-gray-600 text-gray-400'
+            }`}
+        >
+          <span className="text-lg opacity-70">
+            {card.color === 'white' ? '⬜' : '⬛'}
+          </span>
+          <span className="text-[9px] mt-0.5 opacity-50">?</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -79,4 +110,3 @@ export function Card({
     </div>
   );
 }
-

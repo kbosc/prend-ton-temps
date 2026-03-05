@@ -9,6 +9,7 @@ function makePlayer(id: string): Player {
 function makeLobbyState(players: Player[]): GameState {
   return {
     roomId: 'test',
+    creatorId: 'p1',
     phase: 'lobby',
     players,
     clockFaces: [0, 1, 2, 3, 4, 5].map((i) => ({
@@ -37,12 +38,12 @@ describe('createDeck', () => {
 });
 
 describe('dealCards', () => {
-  it('distribue équitablement les cartes entre 2 joueurs', () => {
+  it('distribue 3 cartes par joueur', () => {
     const deck = createDeck();
     const players = [makePlayer('p1'), makePlayer('p2')];
     const dealt = dealCards(deck, players);
-    expect(dealt[0].hand).toHaveLength(12);
-    expect(dealt[1].hand).toHaveLength(12);
+    expect(dealt[0].hand).toHaveLength(3);
+    expect(dealt[1].hand).toHaveLength(3);
   });
 
   it('retourne les joueurs inchangés si aucun joueur', () => {
@@ -73,9 +74,10 @@ describe('startGame', () => {
 describe('playCard', () => {
   it("refuse de jouer si ce n'est pas son tour", () => {
     const lobby = makeLobbyState([makePlayer('p1'), makePlayer('p2')]);
-    const state = startGame(lobby);
-    const firstPlayerId = state.currentTurn;
-    const otherPlayer = state.players.find((p) => p.id !== firstPlayerId)!;
+    const gameState = startGame(lobby);
+    // Forcer le premier joueur comme joueur courant
+    const state = { ...gameState, currentTurn: gameState.players[0].id };
+    const otherPlayer = state.players.find((p) => p.id !== state.currentTurn)!;
     const card = otherPlayer.hand[0];
     const { error } = playCard(state, otherPlayer.id, card.id, 0);
     expect(error).toBeDefined();
@@ -83,7 +85,8 @@ describe('playCard', () => {
 
   it('joue une carte sur un cadran', () => {
     const lobby = makeLobbyState([makePlayer('p1'), makePlayer('p2')]);
-    const state = startGame(lobby);
+    const gameState = startGame(lobby);
+    const state = { ...gameState, currentTurn: gameState.players[0].id };
     const playerId = state.currentTurn;
     const player = state.players.find((p) => p.id === playerId)!;
     const card = player.hand[0];
@@ -95,7 +98,8 @@ describe('playCard', () => {
 
   it('change le tour après avoir joué', () => {
     const lobby = makeLobbyState([makePlayer('p1'), makePlayer('p2')]);
-    const state = startGame(lobby);
+    const gameState = startGame(lobby);
+    const state = { ...gameState, currentTurn: gameState.players[0].id };
     const playerId = state.currentTurn;
     const card = state.players.find((p) => p.id === playerId)!.hand[0];
     const { state: next } = playCard(state, playerId, card.id, 0);
@@ -106,7 +110,8 @@ describe('playCard', () => {
 describe('revealCard', () => {
   it('révèle une carte sur le plateau', () => {
     const lobby = makeLobbyState([makePlayer('p1'), makePlayer('p2')]);
-    let state = startGame(lobby);
+    const gameState = startGame(lobby);
+    const state = { ...gameState, currentTurn: gameState.players[0].id };
     const playerId = state.currentTurn;
     const card = state.players.find((p) => p.id === playerId)!.hand[0];
     const { state: afterPlay } = playCard(state, playerId, card.id, 0);
@@ -117,7 +122,8 @@ describe('revealCard', () => {
 
   it('refuse de dépasser le max de révélations', () => {
     const lobby = makeLobbyState([makePlayer('p1'), makePlayer('p2')]);
-    let state = startGame(lobby);
+    const gameState = startGame(lobby);
+    let state = { ...gameState, currentTurn: gameState.players[0].id };
     // Forcer revealedCount au maximum
     state = { ...state, revealedCount: 4 };
     const playerId = state.currentTurn;

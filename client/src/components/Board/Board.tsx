@@ -84,7 +84,6 @@ export function Board({
               </>
             )}
           </span>
-          <span>Révélations : {gameState.revealedCount} / {MAX_REVEALS_BEFORE_RESOLUTION}</span>
           <span className="text-xs">Salle : {gameState.roomId.slice(0, 8)}…</span>
         </div>
 
@@ -188,6 +187,13 @@ export function Board({
             </div>
           </div>
         </div>
+
+        {/* Compteur révélations — sous le plateau */}
+        {gameState.phase === 'playing' && (
+          <div className="text-sm text-gray-400 font-semibold">
+            Révélations : {gameState.revealedCount} / {MAX_REVEALS_BEFORE_RESOLUTION}
+          </div>
+        )}
       </div>
     </>
   );
