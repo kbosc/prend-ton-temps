@@ -8,9 +8,11 @@ interface HandProps {
   onCardDragEnd: () => void;
   /** Id du joueur local (pour vérifier si c'est son tour) */
   isMyTurn: boolean;
+  /** La partie est réellement lancée (un joueur a cliqué "Je commence") */
+  gameStarted: boolean;
 }
 
-export function Hand({ cards, onCardDragStart, onCardDragEnd, isMyTurn }: HandProps) {
+export function Hand({ cards, onCardDragStart, onCardDragEnd, isMyTurn, gameStarted }: HandProps) {
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-20 bg-gray-900/90 backdrop-blur-sm border-t border-gray-700 p-4"
@@ -28,9 +30,10 @@ export function Hand({ cards, onCardDragStart, onCardDragEnd, isMyTurn }: HandPr
               <Card
                 key={card.id}
                 card={card}
-                faceUp
+                faceUp={gameStarted}
+                showColor={!gameStarted}
                 size="md"
-                draggable={isMyTurn}
+                draggable={isMyTurn && gameStarted}
                 onDragStart={(e) => {
                   e.dataTransfer.setData('cardId', card.id);
                   onCardDragStart(card.id);

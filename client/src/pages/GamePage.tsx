@@ -16,6 +16,7 @@ export function GamePage() {
   const myPlayer = gameState.players.find((p) => p.id === myPlayerId);
   const isMyTurn = gameState.currentTurn === myPlayerId;
   const isFinished = gameState.phase === 'finished';
+  const gameStarted = gameState.phase === 'playing' && gameState.currentTurn !== '';
 
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-32">
@@ -39,6 +40,7 @@ export function GamePage() {
         <Hand
           cards={myPlayer.hand}
           isMyTurn={isMyTurn}
+          gameStarted={gameStarted}
           onCardDragStart={(cardId) => setDragging(true, cardId)}
           onCardDragEnd={() => setDragging(false)}
         />
