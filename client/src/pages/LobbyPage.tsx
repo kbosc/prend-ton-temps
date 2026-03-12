@@ -40,7 +40,7 @@ export function LobbyPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-6">
       <div className="mb-8 text-center">
-        <h1 className="text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">
+        <h1 className="text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">
           🕐 Prend Ton Temps
         </h1>
         <p className="text-gray-400 mt-2">Jeu de cartes stratégique multijoueur</p>
